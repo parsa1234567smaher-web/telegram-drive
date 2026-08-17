@@ -1,18 +1,57 @@
 # 🚀 Telegram Drive
 
-## 📦 Description
-A powerful, automated file management system that syncs your local files with Telegram. Never worry about manual file transfers again!
+### ابزاری هوشمند و خودکار برای مدیریت فایل‌ها بین سیستم و فضای ابری تلگرام
 
-## ⚙️ Features
-- **Auto-Sync:** Drop files into `telegram_drive/` and they are uploaded instantly to your Telegram.
-- **Bi-directional:** Send files to your bot and watch them appear in your local drive.
-- **Smart Progress:** Real-time upload and download tracking in your terminal.
-- **Authorized Access:** Only you (the owner) have control.
+---
 
-## 🛠 Usage
-1. Run the script: `python telegram_drive.py`
-2. Follow the setup wizard to link your bot.
-3. Enjoy seamless file syncing!
+## 📋 فهرست مطالب
+1. [ویژگی‌های کلیدی](#ویژگی‌های-کلیدی)
+2. [پیش‌نیازها](#پیش‌نیازها)
+3. [نصب و راه‌اندازی](#نصب-و-راه‌اندازی)
+4. [راهنمای استفاده](#راهنمای-استفاده)
+5. [مجوز](#مجوز)
 
-## 📜 License
-MIT
+---
+
+## 💎 ویژگی‌های کلیدی
+*   **همگام‌سازی خودکار (Auto-Sync):** کافیست فایل‌های خود را در پوشه `telegram_drive` قرار دهید تا به صورت خودکار به تلگرام آپلود شوند.
+*   **عملکرد دوطرفه (Bi-directional):** فایل‌هایی که در تلگرام برای بات خود می‌فرستید، مستقیماً در پوشه محلی شما ذخیره می‌شوند.
+*   **نوار پیشرفت هوشمند (Smart Progress):** نمایش دقیق درصد، حجم و سرعت انتقال فایل در محیط ترمینال.
+*   **پایداری بالا:** دارای سیستم Retry خودکار برای جلوگیری از قطع شدن آپلود هنگام اختلال شبکه.
+*   **امنیت:** دسترسی محدود به کاربران تعریف شده (Owner IDs).
+
+---
+
+## 🛠 پیش‌نیازها
+برای اجرای این پروژه، نیاز است که پایتون ۳.۶ یا بالاتر روی سیستم شما نصب باشد. سپس کتابخانه‌های مورد نیاز را با دستور زیر نصب کنید:
+
+```bash
+pip install pyTelegramBotAPI watchdog requests urllib3
+```
+
+---
+
+## 🚀 نصب و راه‌اندازی
+1. **ساخت بات:** ابتدا در تلگرام به [@BotFather](https://t.me/botfather) پیام دهید و یک بات جدید بسازید و توکن (Token) آن را دریافت کنید.
+2. **دریافت ID:** برای پیدا کردن User ID خود می‌توانید به بات [@userinfobot](https://t.me/userinfobot) پیام دهید.
+3. **اجرای برنامه:**
+   ```bash
+   python telegram_drive.py
+   ```
+4. **کانفیگ اولیه:** پس از اجرای اولین باری، برنامه از شما "Bot Token" و "Authorized User IDs" را می‌پرسد. آن‌ها را وارد کنید تا فایل کانفیگ ساخته شود.
+
+---
+
+## 📖 راهنمای استفاده
+*   **آپلود خودکار:** فایل‌های خود را در پوشه `telegram_drive` در کنار اسکریپت کپی کنید.
+*   **دستورات داخل تلگرام:**
+    *   `/list`: مشاهده لیست فایل‌های موجود در درایو.
+    *   `/info`: مشاهده وضعیت حجم مصرفی و تعداد فایل‌ها.
+    *   `/delete <filename>`: حذف فایل مشخص از درایو.
+
+---
+
+## ⚖️ مجوز
+این پروژه تحت مجوز **MIT** منتشر شده است. 
+
+*ساخته شده با ❤️*
