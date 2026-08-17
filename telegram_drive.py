@@ -347,7 +347,7 @@ class DriveWatcher(FileSystemEventHandler):
         self.sent_index = sent_index
         self.download_tracker = download_tracker
 
-    def _wait_for_stable(self, path, timeout=3):
+    def _wait_for_stable(self, path, timeout=10):
         prev_size = -1
         elapsed = 0
         while elapsed < timeout:
@@ -358,9 +358,9 @@ class DriveWatcher(FileSystemEventHandler):
                 prev_size = curr_size
             except OSError:
                 return False
-            time.sleep(0.3)
-            elapsed += 0.3
-        return True
+            time.sleep(1)
+            elapsed += 1
+        return False
 
     def on_created(self, event):
         if not event.is_directory:
@@ -455,47 +455,48 @@ class TelegramDriveBot:
                 parse_mode="Markdown",
             )
 
-        @self.bot.message_handler(commands=["list"])
-        def cmd_list(msg):
-            if not self._is_authorized(msg.from_user.id):
-                return
-            files = list(DRIVE_DIR.iterdir()) if DRIVE_DIR.exists() else []
-            files = [f for f in files if f.is_file() and not f.name.startswith(".")]
-            if not files:
-                self.bot.reply_to(msg, "Drive is empty!")
-                return
-            lines = [f"* `{f.name}` - {human_size(f.stat().st_size)}" for f in sorted(files, key=lambda x: x.name)]
-            self.bot.reply_to(msg, f"**Files ({len(files)}):**\n\n" + "\n".join(lines), parse_mode="Markdown")
-
-        @self.bot.message_handler(commands=["info"])
-        def cmd_info(msg):
-            if not self._is_authorized(msg.from_user.id):
-                return
-            files = list(DRIVE_DIR.iterdir()) if DRIVE_DIR.exists() else []
-            files = [f for f in files if f.is_file() and not f.name.startswith(".")]
-            total = sum(f.stat().st_size for f in files)
-            self.bot.reply_to(
-                msg,
-                f"**Telegram Drive**\n\nPath: `{DRIVE_DIR}`\nFiles: {len(files)}\nTotal: {human_size(total)}\nUsers: {len(self.owner_ids)}",
-                parse_mode="Markdown",
-            )
-
-        @self.bot.message_handler(commands=["delete"])
-        def cmd_delete(msg):
-            if not self._is_authorized(msg.from_user.id):
-                return
-            parts = msg.text.split(maxsplit=1)
-            if len(parts) < 2:
-                self.bot.reply_to(msg, "Usage: /delete filename.txt")
-                return
-            filename = parts[1].strip()
-            filepath = DRIVE_DIR / filename
-            if filepath.exists() and filepath.is_file():
-                filepath.unlink()
-                self.sent_index.remove(filepath)
-                self.bot.reply_to(msg, f"`{filename}` deleted!")
-            else:
-                self.bot.reply_to(msg, f"`{filename}` not found!")
+        # [BUG] Command handlers temporarily disabled due to stability issues
+        # @self.bot.message_handler(commands=["list"])
+        # def cmd_list(msg):
+        #     if not self._is_authorized(msg.from_user.id):
+        #         return
+        #     files = list(DRIVE_DIR.iterdir()) if DRIVE_DIR.exists() else []
+        #     files = [f for f in files if f.is_file() and not f.name.startswith(".")]
+        #     if not files:
+        #         self.bot.reply_to(msg, "Drive is empty!")
+        #         return
+        #     lines = [f"* `{f.name}` - {human_size(f.stat().st_size)}" for f in sorted(files, key=lambda x: x.name)]
+        #     self.bot.reply_to(msg, f"**Files ({len(files)}):**\n\n" + "\n".join(lines), parse_mode="Markdown")
+        #
+        # @self.bot.message_handler(commands=["info"])
+        # def cmd_info(msg):
+        #     if not self._is_authorized(msg.from_user.id):
+        #         return
+        #     files = list(DRIVE_DIR.iterdir()) if DRIVE_DIR.exists() else []
+        #     files = [f for f in files if f.is_file() and not f.name.startswith(".")]
+        #     total = sum(f.stat().st_size for f in files)
+        #     self.bot.reply_to(
+        #         msg,
+        #         f"**Telegram Drive**\n\nPath: `{DRIVE_DIR}`\nFiles: {len(files)}\nTotal: {human_size(total)}\nUsers: {len(self.owner_ids)}",
+        #         parse_mode="Markdown",
+        #     )
+        #
+        # @self.bot.message_handler(commands=["delete"])
+        # def cmd_delete(msg):
+        #     if not self._is_authorized(msg.from_user.id):
+        #         return
+        #     parts = msg.text.split(maxsplit=1)
+        #     if len(parts) < 2:
+        #         self.bot.reply_to(msg, "Usage: /delete filename.txt")
+        #         return
+        #     filename = parts[1].strip()
+        #     filepath = DRIVE_DIR / filename
+        #     if filepath.exists() and filepath.is_file():
+        #         filepath.unlink()
+        #         self.sent_index.remove(filepath)
+        #         self.bot.reply_to(msg, f"`{filename}` deleted!")
+        #     else:
+        #         self.bot.reply_to(msg, f"`{filename}` not found!")
 
         @self.bot.message_handler(content_types=["document"])
         def handle_document(msg):
